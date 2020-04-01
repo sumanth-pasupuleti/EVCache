@@ -259,6 +259,79 @@ public abstract class Base  {
         return value;
     }
 
+    public void allMixTest(EVCache gCache) throws Exception {
+        String key = "sumanthkey1111";
+        String value = "value1";
+        String key2 = "sumanthkey2222";
+        String value2 = "value2";
+        String key3 = "sumanthkey3333";
+
+        // test add
+        Boolean result = true;
+        EVCacheLatch latch = gCache.add(key, value, null, 3600, Policy.ONE);
+        latch.await(10, TimeUnit.SECONDS);
+        for(Future f : latch.getAllFutures())
+        {
+            if(f.get() == Boolean.FALSE)
+                result = false;
+        }
+
+        // check for result - should be true
+
+        // try adding again - should return false
+        latch = gCache.add(key, value + "_new", null, 3600, Policy.ONE);
+        latch.await(10, TimeUnit.SECONDS);
+        for(Future f : latch.getAllFutures())
+        {
+            if(f.get() == Boolean.FALSE)
+                result = false;
+        }
+
+        // check for result - should be false
+
+        // do a get
+        String valueResult = gCache.<String>get(key);
+        if (!valueResult.equals(value))
+        {
+            throw new Exception("Values do not match");
+        }
+
+        // do a set (overwrite old kv and write a new kv)
+        gCache.set(key, value2);
+        gCache.set(key2, value);
+
+        String value1Result = gCache.<String>get(key2);
+        if (!value1Result.equals(value))
+        {
+            throw new Exception("Values do not match");
+        }
+        String value2Result = gCache.<String>get(key);
+        if (!value2Result.equals(value2))
+        {
+            throw new Exception("Values do not match");
+        }
+
+        // do an append
+        Future<Boolean>[] futures = gCache.append(key, "_new2", 3600);
+        for(Future<Boolean> future : futures)
+        {
+            if(!future.get())
+            {
+                throw new Exception("Failed to append");
+            }
+        }
+
+        // do a get
+        valueResult = gCache.<String>get(key);
+        if (!valueResult.equals(value2 + "_new2")) {
+            throw new Exception("Values do not match");
+        }
+
+        // inc dec
+        long incvalue = gCache.incr("sumanthint1", 4, 4, 3600);
+        incvalue = gCache.incr("sumanthint1", 2, 4, 3600);
+    }
+
     class RemoteCaller implements Runnable {
         EVCache gCache;
         public RemoteCaller(EVCache c) {

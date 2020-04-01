@@ -29,7 +29,7 @@ import com.netflix.evcache.pool.EVCacheClientPoolManager;
 
 import rx.schedulers.Schedulers;
 
-@SuppressWarnings({"unused","deprecation"})
+
 public class SimpleEVCacheTest extends Base {
     private static final Logger log = LogManager.getLogger(SimpleEVCacheTest.class);
 
@@ -54,12 +54,15 @@ public class SimpleEVCacheTest extends Base {
         Logger.getLogger(EVCacheClientPool.class).setLevel(Level.DEBUG);
 
         final Properties props = getProps();
-        props.setProperty("EVCACHE_TEST.use.simple.node.list.provider", "true");
-        props.setProperty("EVCACHE_TEST.EVCacheClientPool.readTimeout", "1000");
-        props.setProperty("EVCACHE_TEST.EVCacheClientPool.bulkReadTimeout", "1000");
-        props.setProperty("EVCACHE_TEST.max.read.queue.length", "100");
-        props.setProperty("EVCACHE_TEST.operation.timeout", "10000");
-        props.setProperty("EVCACHE_TEST.throw.exception", "false");
+        props.setProperty("EVCACHE_PERF_SP_HW.use.simple.node.list.provider", "true");
+        props.setProperty("EVCACHE_PERF_SP_HW.EVCacheClientPool.readTimeout", "1000");
+        props.setProperty("EVCACHE_PERF_SP_HW.EVCacheClientPool.bulkReadTimeout", "1000");
+        props.setProperty("EVCACHE_PERF_SP_HW.max.read.queue.length", "100");
+        props.setProperty("EVCACHE_PERF_SP_HW.operation.timeout", "10000");
+        props.setProperty("EVCACHE_PERF_SP_HW.throw.exception", "false");
+
+        // set nodes list
+        props.setProperty("EVCACHE_PERF_SP_HW.EVCACHE_PERF_SP_HW-NODES", "evcache_test-useast1d-1581010900-00=100.66.202.227:11211");
 
         int maxThreads = 2;
         final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(100000);
@@ -77,7 +80,7 @@ public class SimpleEVCacheTest extends Base {
     
     public void testAll() {
         try {
-            EVCacheClientPoolManager.getInstance().initEVCache("EVCACHE_TEST");
+            EVCacheClientPoolManager.getInstance().initEVCache("EVCACHE_PERF_SP_HW");
             testEVCache();
 
             int i = 1;
@@ -122,7 +125,7 @@ public class SimpleEVCacheTest extends Base {
 
     @Test
     public void testEVCache() {
-        this.evCache = (new EVCache.Builder()).setAppName("EVCACHE_TEST").setCachePrefix(null).enableRetry().build();
+        this.evCache = (new EVCache.Builder()).setAppName("EVCACHE_PERF_SP_HW").setCachePrefix(null).enableRetry().build();
         assertNotNull(evCache);
     }
 
@@ -133,7 +136,13 @@ public class SimpleEVCacheTest extends Base {
         }
     }
 
-    @Test(dependsOnMethods = { "testAdd" })
+    @Test(dependsOnMethods = { "testAdd"})
+    public void testAllMix() throws Exception
+    {
+        allMixTest(evCache);
+    }
+
+    @Test(dependsOnMethods = { "testAllMix" })
     public void testInsert() throws Exception {
         for (int i = 0; i < 10; i++) {
             assertTrue(insert(i, evCache), "SET : Following Index failed - " + i + " for evcache - " + evCache);

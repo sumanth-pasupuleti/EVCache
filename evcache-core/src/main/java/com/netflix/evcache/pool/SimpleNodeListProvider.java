@@ -77,10 +77,10 @@ public class SimpleNodeListProvider implements EVCacheNodeList {
     @Override
     public Map<ServerGroup, EVCacheServerGroupConfig> discoverInstances(String appName) throws IOException {
         final String propertyName = appName + "-NODES";
-        final String nodeListString = EVCacheConfig.getInstance().getPropertyRepository().get(propertyName, String.class).orElse("").get();
+        final String nodeListString = "evcache_perf_sp_hw-useast1c-1584892549-00=100.66.198.35:11211"; //EVCacheConfig.getInstance().getPropertyRepository().get(propertyName, String.class).orElse("").get();
         if (log.isDebugEnabled()) log.debug("List of Nodes = " + nodeListString);
         if(nodeListString != null && nodeListString.length() > 0) return bootstrapFromSystemProperty(nodeListString);
-        
+
         if(env != null && region != null) return bootstrapFromEureka(appName);
         
         return Collections.<ServerGroup, EVCacheServerGroupConfig> emptyMap();

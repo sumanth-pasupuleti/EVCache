@@ -46,12 +46,12 @@ public class SimpleEurekaEVCacheTest extends Base {
         org.apache.log4j.Logger.getLogger(EVCacheClient.class).setLevel(Level.ERROR);
         org.apache.log4j.Logger.getLogger(EVCacheClientPool.class).setLevel(Level.ERROR);
         System.setProperty("evcache.use.simple.node.list.provider", "true");
-        System.setProperty("EVCACHE_AB.EVCacheClientPool.readTimeout", "100000");
-        System.setProperty("EVCACHE_AB.EVCacheClientPool.bulkReadTimeout", "10000");
-        System.setProperty("EVCACHE_AB.max.read.queue.length", "100");
-        System.setProperty("EVCACHE_AB.operation.timeout", "10000");
-        System.setProperty("EVCACHE_AB.throw.exception", "false");
-        System.setProperty("EVCACHE_AB.chunk.data", "false");
+        System.setProperty("EVCACHE_PERF_SP_HW.EVCacheClientPool.readTimeout", "100000");
+        System.setProperty("EVCACHE_PERF_SP_HW.EVCacheClientPool.bulkReadTimeout", "10000");
+        System.setProperty("EVCACHE_PERF_SP_HW.max.read.queue.length", "100");
+        System.setProperty("EVCACHE_PERF_SP_HW.operation.timeout", "10000");
+        System.setProperty("EVCACHE_PERF_SP_HW.throw.exception", "false");
+        System.setProperty("EVCACHE_PERF_SP_HW.chunk.data", "false");
         System.setProperty("NETFLIX_ENVIRONMENT", "test");
         System.setProperty("EC2_REGION", "us-east-1");
         System.setProperty("evcache.thread.daemon", "true");
@@ -74,7 +74,7 @@ public class SimpleEurekaEVCacheTest extends Base {
     public void testAll() {
         try {
             setupClusterDetails();
-            EVCacheClientPoolManager.getInstance().initEVCache("EVCACHE_AB");
+            EVCacheClientPoolManager.getInstance().initEVCache("EVCACHE_PERF_SP_HW");
             testEVCache();
 
             int i = 1;
@@ -121,7 +121,7 @@ public class SimpleEurekaEVCacheTest extends Base {
 
     @Test
     public void testEVCache() {
-        this.evCache = (new EVCache.Builder()).setAppName("EVCACHE_AB").setCachePrefix(null).enableRetry().build();
+        this.evCache = (new EVCache.Builder()).setAppName("EVCACHE_PERF_SP_HW").setCachePrefix(null).enableRetry().build();
         assertNotNull(evCache);
     }
 

@@ -99,6 +99,7 @@ final public class EVCacheImpl implements EVCache {
         this._appName = appName;
         this._cacheName = cacheName;
 
+        // Check for white space in cacheName
         if(_cacheName != null && _cacheName.length() > 0) {
             for(int i = 0; i < cacheName.length(); i++) {
                 if(Character.isWhitespace(cacheName.charAt(i))){
